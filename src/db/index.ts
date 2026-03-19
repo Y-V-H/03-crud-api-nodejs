@@ -1,12 +1,8 @@
 import { randomUUID } from 'crypto';
+import type { ProductInput } from '../schemas/product.js';
 
-export interface Product {
+export interface Product extends ProductInput {
   id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  inStock: boolean;
 }
 
 export const db: Product[] = [
