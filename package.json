@@ -15,7 +15,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "fastify start server.js"
+    "start:dev": "tsx watch src/server.ts",
+    "start:prod": "tsc && node dist/server.js"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
