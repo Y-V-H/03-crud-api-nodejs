@@ -25,9 +25,11 @@ async function routes(fastify: FastifyInstance, options: unknown) {
         return product;
       } else {
         reply.status(404).send({ message: 'Product not found' });
+        return;
       }
     } else {
       reply.status(400).send({ message: 'Invalid product ID' });
+      return;
     }
   });
 
@@ -45,6 +47,7 @@ async function routes(fastify: FastifyInstance, options: unknown) {
 
       db.push(newProduct);
       reply.status(201).send(newProduct);
+      return;
     }
   });
 
@@ -61,18 +64,39 @@ async function routes(fastify: FastifyInstance, options: unknown) {
     }
 
     if (result.success) {
-      const product = db.find((el) => el.id === productId);
-      if (product) {
-        const index = db.findIndex((el) => el.id === productId);
-
+      const index = db.findIndex((el) => el.id === productId);
+      if (index === -1) {
+        reply.status(404).send({ message: 'Product not found' });
+        return;
+      } else {
         db[index] = { ...result.data, id: productId };
 
-        reply.status(201).send(db[index]);
-      } else {
-        reply.status(404).send({ message: 'Product not found' });
+        reply.status(200).send(db[index]);
+        return;
       }
     } else {
       reply.status(400).send({ message: 'Invalid request body' });
+      return;
+    }
+  });
+
+  fastify.delete<{
+    Params: Params;
+  }>('/api/products/:productId', async (request, reply) => {
+    const { productId } = request.params;
+    const isValidUUID = z.uuid().safeParse(productId).success;
+
+    if (!isValidUUID) {
+      reply.status(400).send({ message: 'Invalid product ID' });
+      return;
+    } else {
+      const index = db.findIndex((el) => el.id === productId);
+      if (index === -1) {
+        reply.status(404).send({ message: 'Product not found' });
+        return;
+      }
+      const deletedElement = db.splice(index, 1);
+      reply.status(204).send();
       return;
     }
   });
