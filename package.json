@@ -15,7 +15,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "npm start"
+    "start:dev": "tsx watch src/server.ts",
+    "start:prod": "tsc && node dist/server.js",
+    "test": "tsx --test src/tests/**/*.test.ts",
+    "test:watch": "node -r node:test --test --watch tests/**/*.test.ts"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
